@@ -30,7 +30,7 @@ jobs:
           DATABASE_URL: sqlite:///./test.db
           JWT_SECRET: test-secret-key
           JWT_EXPIRE_MINUTES: 60
-          ADMIN_EMAIL: admin@voltaire.com
+          ADMIN_EMAIL: admin@groupevoltaire.com
           ADMIN_PASSWORD: admin
           ENVIRONMENT: test
         run: pytest tests/ -v --cov=app --cov-report=term-missing

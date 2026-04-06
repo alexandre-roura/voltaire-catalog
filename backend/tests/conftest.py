@@ -52,7 +52,7 @@ def client(db):
 def auth_headers(client):
     response = client.post(
         "/auth/token",
-        data={"username": "admin@voltaire.com", "password": "admin"},
+        data={"username": "admin@groupevoltaire.com", "password": "admin"},
     )
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
