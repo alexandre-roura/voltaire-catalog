@@ -23,6 +23,7 @@ export function DashboardPage() {
   const [error, setError] = useState('')
   const [category, setCategory] = useState('')
   const [inStock, setInStock] = useState(false)
+  const [search, setSearch] = useState('')
   const [deleting, setDeleting] = useState<string | null>(null)
   const navigate = useNavigate()
 
@@ -59,8 +60,15 @@ export function DashboardPage() {
     }
   }
 
-  const total = products.length
-  const outOfStock = products.filter(p => p.stock === 0).length
+  const filtered = search.trim()
+    ? products.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.sku.toLowerCase().includes(search.toLowerCase())
+      )
+    : products
+
+  const total = filtered.length
+  const outOfStock = filtered.filter(p => p.stock === 0).length
 
   return (
     <AppLayout>
@@ -79,33 +87,41 @@ export function DashboardPage() {
           </button>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-4 mb-5">
-          <div className="flex gap-1 bg-white border border-border rounded p-1">
-            {CATEGORIES.map(c => (
-              <button
-                key={c.value}
-                onClick={() => setCategory(c.value)}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors cursor-pointer ${
-                  category === c.value
-                    ? 'bg-navy text-white'
-                    : 'text-mid hover:text-navy'
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
+        {/* Filters + Search */}
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1 bg-white border border-border rounded p-1">
+              {CATEGORIES.map(c => (
+                <button
+                  key={c.value}
+                  onClick={() => setCategory(c.value)}
+                  className={`px-3 py-1 rounded text-sm font-medium transition-colors cursor-pointer ${
+                    category === c.value
+                      ? 'bg-navy text-white'
+                      : 'text-mid hover:text-navy'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={inStock}
+                onChange={e => setInStock(e.target.checked)}
+                className="accent-accent w-4 h-4"
+              />
+              <span className="text-sm text-mid">En stock uniquement</span>
+            </label>
           </div>
-
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={inStock}
-              onChange={e => setInStock(e.target.checked)}
-              className="accent-accent w-4 h-4"
-            />
-            <span className="text-sm text-mid">En stock uniquement</span>
-          </label>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Rechercher par nom ou SKU…"
+            className="border border-border rounded px-3 py-2 text-sm text-navy bg-white outline-none focus:border-accent w-64"
+          />
         </div>
 
         {/* Error */}
@@ -142,7 +158,7 @@ export function DashboardPage() {
                   </td>
                 </tr>
               ) : (
-                products.map(p => (
+                filtered.map(p => (
                   <tr key={p.id} className="border-b border-border last:border-0 hover:bg-page transition-colors">
                     <td className="px-4 py-3 text-navy font-medium">{p.name}</td>
                     <td className="px-4 py-3 text-mid font-mono text-xs">{p.sku}</td>
