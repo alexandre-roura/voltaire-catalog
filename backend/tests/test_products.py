@@ -1,9 +1,9 @@
 PRODUCT_PAYLOAD = {
-    "name": "Selle Classic Pro",
+    "name": "Blue Infinite",
     "category": "selle",
-    "sku": "SELL-CL-001",
-    "description": "Selle en cuir pleine fleur",
-    "price": 450.0,
+    "sku": "SELL-BI-001",
+    "description": "Née pour performer",
+    "price": 4500.0,
     "stock": 10,
     "image_url": None,
 }
@@ -19,8 +19,8 @@ def test_create_product(client, auth_headers):
     response = client.post("/products", json=PRODUCT_PAYLOAD, headers=auth_headers)
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == "Selle Classic Pro"
-    assert data["sku"] == "SELL-CL-001"
+    assert data["name"] == "Blue Infinite"
+    assert data["sku"] == "SELL-BI-001"
     assert "id" in data
 
 
@@ -33,7 +33,7 @@ def test_list_products(client, auth_headers):
 
 def test_list_products_filter_category(client, auth_headers):
     client.post("/products", json=PRODUCT_PAYLOAD, headers=auth_headers)
-    etrier_payload = {**PRODUCT_PAYLOAD, "sku": "ETR-001", "category": "etrier"}
+    etrier_payload = {**PRODUCT_PAYLOAD, "name": "Etrier Compositi Reflex", "sku": "ETR-REFLEX-001", "category": "etrier"}
     client.post("/products", json=etrier_payload, headers=auth_headers)
 
     response = client.get("/products?category=selle")
@@ -87,7 +87,7 @@ def test_create_product_requires_auth(client):
 
 
 def test_list_products_filter_in_stock(client, auth_headers):
-    out_of_stock = {**PRODUCT_PAYLOAD, "sku": "SELL-002", "stock": 0}
+    out_of_stock = {**PRODUCT_PAYLOAD, "name": "Blue Jumpeur", "sku": "SELL-BJ-001", "stock": 0}
     client.post("/products", json=PRODUCT_PAYLOAD, headers=auth_headers)
     client.post("/products", json=out_of_stock, headers=auth_headers)
 
