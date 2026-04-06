@@ -1,10 +1,8 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './router/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
-
-// Pages — à venir
-const DashboardPage = () => <div>Dashboard - TODO</div>
-const ProductFormPage = () => <div>ProductFormPage - TODO</div>
+import { DashboardPage } from './pages/DashboardPage'
+import { ProductFormPage } from './pages/ProductFormPage'
 
 export default function App() {
   return (
