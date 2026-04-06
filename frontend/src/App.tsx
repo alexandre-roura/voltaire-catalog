@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './router/ProtectedRoute'
+import { LoginPage } from './pages/LoginPage'
 
-// Pages — remplacées au fur et à mesure
-const LoginPage = () => <div>Login - TODO</div>
+// Pages — à venir
 const DashboardPage = () => <div>Dashboard - TODO</div>
 const ProductFormPage = () => <div>ProductFormPage - TODO</div>
 
