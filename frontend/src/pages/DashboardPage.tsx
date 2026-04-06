@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../services/api'
-import type { Product } from '../services/api'
 import { AppLayout } from '../components/AppLayout'
 
 const CATEGORIES = [
@@ -18,46 +18,25 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export function DashboardPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [category, setCategory] = useState('')
   const [inStock, setInStock] = useState(false)
   const [search, setSearch] = useState('')
-  const [deleting, setDeleting] = useState<string | null>(null)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    load()
-  }, [category, inStock])
+  const { data: products = [], isLoading, isError } = useQuery({
+    queryKey: ['products', category, inStock],
+    queryFn: () => api.getProducts({ category: category || undefined, in_stock: inStock || undefined }),
+  })
 
-  async function load() {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await api.getProducts({
-        category: category || undefined,
-        in_stock: inStock || undefined,
-      })
-      setProducts(data)
-    } catch {
-      setError('Impossible de charger les produits.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.deleteProduct(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+  })
 
   async function handleDelete(id: string) {
     if (!confirm('Supprimer ce produit ?')) return
-    setDeleting(id)
-    try {
-      await api.deleteProduct(id)
-      setProducts(prev => prev.filter(p => p.id !== id))
-    } catch {
-      setError('Erreur lors de la suppression.')
-    } finally {
-      setDeleting(null)
-    }
+    deleteMutation.mutate(id)
   }
 
   const filtered = search.trim()
@@ -125,9 +104,9 @@ export function DashboardPage() {
         </div>
 
         {/* Error */}
-        {error && (
+        {isError && (
           <div className="bg-danger-bg border border-danger-border text-danger rounded px-4 py-2 mb-4 text-sm">
-            {error}
+            Impossible de charger les produits.
           </div>
         )}
 
@@ -145,13 +124,13 @@ export function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {isLoading ? (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-muted text-sm">
                     Chargement…
                   </td>
                 </tr>
-              ) : products.length === 0 ? (
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-muted text-sm">
                     Aucun produit trouvé.
@@ -183,10 +162,10 @@ export function DashboardPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(p.id)}
-                          disabled={deleting === p.id}
+                          disabled={deleteMutation.isPending && deleteMutation.variables === p.id}
                           className="text-xs text-danger hover:text-red-700 transition-colors cursor-pointer disabled:opacity-50"
                         >
-                          {deleting === p.id ? '…' : 'Supprimer'}
+                          {deleteMutation.isPending && deleteMutation.variables === p.id ? '…' : 'Supprimer'}
                         </button>
                       </div>
                     </td>
@@ -197,7 +176,7 @@ export function DashboardPage() {
           </table>
 
           {/* Footer stats */}
-          {!loading && products.length > 0 && (
+          {!isLoading && filtered.length > 0 && (
             <div className="px-4 py-2.5 border-t border-border bg-page flex gap-6">
               <span className="text-xs text-muted">{total} produit{total > 1 ? 's' : ''}</span>
               {outOfStock > 0 && (

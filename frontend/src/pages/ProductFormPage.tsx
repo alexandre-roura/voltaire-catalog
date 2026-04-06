@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 import { api } from '../services/api'
 import type { ProductCreate } from '../services/api'
@@ -31,6 +32,7 @@ export function ProductFormPage() {
   const { id } = useParams()
   const isEdit = Boolean(id)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const [form, setForm] = useState<ProductCreate>(EMPTY)
   const [loading, setLoading] = useState(isEdit)
@@ -89,6 +91,7 @@ export function ProductFormPage() {
       } else {
         await api.createProduct(payload)
       }
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
       navigate('/')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
