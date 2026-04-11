@@ -33,12 +33,9 @@ export function StatsPanel() {
           <span className="text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-muted">Références</span>
           <div className="w-7 h-7 rounded bg-accent-light flex items-center justify-center text-accent text-xs">▤</div>
         </div>
-        <div className="text-[1.8rem] leading-none text-navy mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+        <div className="text-[1.8rem] leading-none text-navy" style={{ fontFamily: "'DM Serif Display', serif" }}>
           {total}
         </div>
-        <span className="inline-block text-[0.7rem] font-medium bg-[#e8f5ee] text-[#1e7e4a] px-1.5 py-0.5 rounded">
-          {total} au catalogue
-        </span>
       </div>
 
       {/* Valeur stock */}
@@ -47,12 +44,9 @@ export function StatsPanel() {
           <span className="text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-muted">Valeur stock</span>
           <div className="w-7 h-7 rounded bg-[#e8f5ee] flex items-center justify-center text-[#1e7e4a] text-xs font-semibold">€</div>
         </div>
-        <div className="text-[1.8rem] leading-none text-navy mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+        <div className="text-[1.8rem] leading-none text-navy" style={{ fontFamily: "'DM Serif Display', serif" }}>
           {stockValue.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
         </div>
-        <span className="inline-block text-[0.7rem] font-medium bg-page text-muted px-1.5 py-0.5 rounded">
-          Prix × qté
-        </span>
       </div>
 
       {/* Ruptures */}
