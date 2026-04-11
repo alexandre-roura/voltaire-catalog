@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { ProtectedRoute } from './router/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'

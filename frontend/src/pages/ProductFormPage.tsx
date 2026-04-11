@@ -12,8 +12,8 @@ const productSchema = z.object({
   category: z.enum(['selle', 'etrier', 'accessoire']),
   sku: z.string().min(1, 'Le SKU est requis'),
   description: z.string().optional(),
-  price: z.number({ invalid_type_error: 'Prix invalide' }).min(0, 'Le prix doit être positif'),
-  stock: z.number({ invalid_type_error: 'Stock invalide' }).int().min(0, 'Le stock doit être positif'),
+  price: z.number().min(0, 'Le prix doit être positif'),
+  stock: z.number().int().min(0, 'Le stock doit être positif'),
   image_url: z.url('URL invalide').optional().or(z.literal('')),
 })
 
