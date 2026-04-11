@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { api } from '../services/api'
 import { AppLayout } from '../components/AppLayout'
+import { ConfirmModal } from '../components/ConfirmModal'
 
 const CATEGORIES = [
   { value: '', label: 'Tous' },
@@ -21,6 +23,7 @@ export function DashboardPage() {
   const [category, setCategory] = useState('')
   const [inStock, setInStock] = useState(false)
   const [search, setSearch] = useState('')
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -31,13 +34,15 @@ export function DashboardPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteProduct(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      setDeleteId(null)
+      toast.success('Produit supprimé')
+    },
+    onError: () => {
+      toast.error('Erreur lors de la suppression')
+    },
   })
-
-  async function handleDelete(id: string) {
-    if (!confirm('Supprimer ce produit ?')) return
-    deleteMutation.mutate(id)
-  }
 
   const filtered = search.trim()
     ? products.filter(p =>
@@ -161,11 +166,10 @@ export function DashboardPage() {
                           Modifier
                         </button>
                         <button
-                          onClick={() => handleDelete(p.id)}
-                          disabled={deleteMutation.isPending && deleteMutation.variables === p.id}
-                          className="text-xs text-danger hover:text-red-700 transition-colors cursor-pointer disabled:opacity-50"
+                          onClick={() => setDeleteId(p.id)}
+                          className="text-xs text-danger hover:text-red-700 transition-colors cursor-pointer"
                         >
-                          {deleteMutation.isPending && deleteMutation.variables === p.id ? '…' : 'Supprimer'}
+                          Supprimer
                         </button>
                       </div>
                     </td>
@@ -186,6 +190,14 @@ export function DashboardPage() {
           )}
         </div>
       </div>
+      {deleteId && (
+        <ConfirmModal
+          message="Supprimer ce produit ?"
+          onConfirm={() => deleteMutation.mutate(deleteId)}
+          onCancel={() => setDeleteId(null)}
+          loading={deleteMutation.isPending}
+        />
+      )}
     </AppLayout>
   )
 }
