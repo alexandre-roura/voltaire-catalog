@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { api } from '../services/api'
 import type { ProductCreate } from '../services/api'
@@ -92,9 +93,12 @@ export function ProductFormPage() {
         await api.createProduct(payload)
       }
       await queryClient.invalidateQueries({ queryKey: ['products'] })
+      toast.success(isEdit ? 'Produit mis à jour' : 'Produit créé')
       navigate('/')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
+      const msg = err instanceof Error ? err.message : 'Une erreur est survenue.'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setSaving(false)
     }
