@@ -84,8 +84,8 @@ export function ProductFormPage() {
     try {
       const payload: ProductCreate = {
         ...result.data,
-        description: result.data.description || undefined,
-        image_url: result.data.image_url || undefined,
+        description: result.data.description || null,
+        image_url: result.data.image_url || null,
       }
       if (isEdit && id) {
         await api.updateProduct(id, payload)

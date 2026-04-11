@@ -81,8 +81,8 @@ export interface ProductCreate {
   name: string
   category: 'selle' | 'etrier' | 'accessoire'
   sku: string
-  description?: string
+  description?: string | null
   price: number
   stock: number
-  image_url?: string
+  image_url?: string | null
 }
