@@ -1,10 +1,10 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import { ProtectedRoute } from './router/ProtectedRoute'
-
-// Pages — remplacées au fur et à mesure
-const LoginPage = () => <div>Login - TODO</div>
-const DashboardPage = () => <div>Dashboard - TODO</div>
-const ProductFormPage = () => <div>ProductFormPage - TODO</div>
+import { LoginPage } from './pages/LoginPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { ProductFormPage } from './pages/ProductFormPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -35,8 +35,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <Toaster position="bottom-right" richColors />
     </BrowserRouter>
   )
 }
